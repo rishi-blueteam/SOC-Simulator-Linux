@@ -4,7 +4,7 @@
 <h3>Phase 1: Client Architecture Setup </h3>
 
 
-![alt text](/Readme_Images/Phase%201%20Client%20Architecture%20Setup%20MD.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/Phase%201%20Client%20Architecture%20Setup%20MD.png)
 
 <h4> Gateway 1: Postfix MTA Configuration </h4> 
 
@@ -47,8 +47,7 @@ sudo mkdir -p /home/client01/Maildir/{cur,new,tmp}
 sudo chown -R client01:client01 /home/client01/Maildir
 sudo chmod -R 700 /home/client01/Maildir
 
-
-
+-------------------------------------------------------------------
 
 
              Mailbox storage
@@ -63,7 +62,7 @@ sudo chmod -R 700 /home/client01/Maildir
 ```
 
 
-##### Protocol used here: IMAP
+<b> Protocol used here: IMAP </b>
 
 * <b>IMAP</b>: Internet Message Autentication Protocol, is used when users who wish to access the mail server to view the list of messages it recieved. 
 * The list of messages recieved can be viewed, and technically every message has certain content which is stored in the server(dovcot)
@@ -87,13 +86,13 @@ Now since our user is created:
 We can send a sample mail via Postfix to see if the mail goes to the Mail Storage(Dovcot) and the the client could then access it.
 
 
-![alt text](/Readme_Images/image-4.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-4.png)
 
 We see this big long text of random strings is as every new mail represents as a new file and a dedicated string for each new file.
 
 Lets see the list of files the user has opened in the image below.
 
-![alt text](/Readme_Images/image-5.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-5.png)
 
 
 <h4> Gate 4: Roundcube Webmail Installation & Verification </h4> 
@@ -116,9 +115,11 @@ This is the planned ouput
 
 <b>Results:</b>
 
-![alt text](/Readme_Images/image-2.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-2.png)
 
-![alt text](/Readme_Images/image-3.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-3.png)
+
+
 
 ---------------
 
@@ -132,10 +133,12 @@ This phase involves sending the mail via the github repository to the user mail 
 
 Every single Mail parsed is from the replay_phish.py file which will access every single .eml file from the repo on a random base, select, note the metadata & exclusion to the history so that while we analyze and practice, we never ever analyze the same mail again, or no new same mail comes to the inbox ever, and goes on to send to the user's inbox. 
 
-##### Workflow:
+Workflow:
+
+### Phase 2: Roundcube Mailbox Setup
 
 
-![alt text](/Readme_Images/image-1.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-1.png)
 
 The <b>MIME parser</b> is simply the component that understands the internal structure of the .eml headers, HTML/plaintext, attachments, MIME boundaries, etc.Now, the replay engine can deliver the email correctly into the simulated client's mailbox.
 
@@ -169,10 +172,35 @@ The <b>MIME parser</b> is simply the component that understands the internal str
 ```
 
 
+Now every mail sent may or may not contain a url, and most likely if the url is embedded as a button or a link to click on, that possible link could be a shortened link in the format of .bitly, tinyurl.com, goo.gl etc.
 
-<h3>Phase 3: Email Header Analysis Tool & URL Analysis Tool</h3><br>
+The next ideal is to unshorten it and rewrite to a safe link (Microsoft Approach YES I KNOW!)
 
-<b>URL Analysis Tool</b>
+```plaintext
+
+   [ replay_phish.py ]
+          │ (Sends raw .eml)
+          ▼
+┌─────────────────────────────────────────┐
+│       email_intake_filter.py            │
+│  1. Parse .eml MIME body (HTML/Text)    │
+│  2. Extract body URLs (Ignore noise)    │
+│  3. Unshorten & Check Threat Intel APIs │
+│  4. Clean? Rewrite to SafeLink format   │
+│  5. Malicious? Flag/Quarantine          │
+└─────────────────────────────────────────┘
+          │ (Delivers sanitized .eml)
+          ▼
+   [ Roundcube / User Inbox ]
+
+```
+
+
+
+
+<h3>Phase 3: Email Header Analysis Tool & Other Tools</h3><br>
+
+#### URL Analysis Tool
 
 This has 2 parts:
 
@@ -182,12 +210,12 @@ We have the interactive URL analyzer which helps us automatically run, create sn
 
 This helps us also see that how, upon clicking a single url, initially and the true url when the user lands on the actual page if the url has changed or no. 
 
-![alt text](/Readme_Images/image-6.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-6.png)
 
 
-<b>2. Mannual Interactive Phishing Site Sandbox</b>
+<b> 2. Mannual Interactive Phishing Site Sandbox</b>
 
-![alt text](/Readme_Images/image.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image.png)
 
 <b>Use Case:</b> 
 If an analyst wish to see, collect snapshots of each webpage, from each page the user would hypothetically land upon, or rather would get redirected to with respect to the Phishing website, is where this tool comes in handy.
@@ -220,31 +248,31 @@ x11vnc -display :99 -forever -shared -rfbport 5900 &
 
 We visit the phishing link website:
 
-![alt text](/Readme_Images/image-9.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-9.png)
 
 
 We even click on the learn more to redirect to another page:
 
-![alt text](/Readme_Images/image-10.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-10.png)
 
 The logs on the cli gets noted as shown:
-![alt text](/Readme_Images/image-11.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-11.png)
 
 Once we end the seession we also get to see the website screen shot being taken after we terminate the session:
 
-![alt text](/Readme_Images/image-12.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-12.png)
 
 We can view the screenshot Images of the sites but by first creating a request to host the list of directories of the particular directory we are in and print it out.
 
 ```bash
-python3 -m http.server 8080
+   python3 -m http.server 8080
 ```
 
-![alt text](/Readme_Images/image-13.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-13.png)
 
-![alt text](/Readme_Images/image-14.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-14.png)
 
-![alt text](/Readme_Images/image-15.png)
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-15.png)
 
 
 <b>3. Co-Relation Analyzer Tool Depictor (URL_Analyzer) </b>
@@ -261,11 +289,52 @@ This tool helps us to do analysis across multiple security vendors tools for url
 |                      |                                                             |                             |                                                                            |
 
 
-
-![alt text](/Readme_Images/image-7.png)
-
-
+![alt text](https://github.com/rishi-blueteam/SOC-Simulator/blob/main/Readme_Images/image-7.png)
 
 --------
 
+#### Domain Analysis Tool
+
+
+```plaintext
+
+[ Domain Input from EML ]
+           │
+           ▼
+┌────────────────────────────────┐    YES    ┌───────────────────────────────┐
+│ Is Domain in Tranco Top 100k?  │ ────────> │ Flag as Safelisted / Low Risk │
+└────────────────────────────────┘           └───────────────────────────────┘
+           │ NO
+           ▼
+┌────────────────────────────────┐
+│ RDAP Lookup: Domain Age Check  │
+└────────────────────────────────┘
+           │
+           ├─────────────────────────┐
+           ▼                         ▼
+  [ Age < 30-90 Days ]       [ Age > 90 Days ]
+  Flag as HIGH RISK          Continue Inspection
+  (Newly Registered Domain)          │
+           │                         ▼
+           │           ┌──────────────────────────────┐
+           │           │ Run dnstwist Brand Matching  │ ──> Detects typosquatting
+           │           └──────────────────────────────┘     against monitored brands
+           │                         │
+           ▼                         ▼
+┌─────────────────────────────────────────────────────┐
+│ Query VirusTotal / IPQS / URLhaus Domain Reputation │
+└─────────────────────────────────────────────────────┘
+
+```
+
+<b>Decision Matrix for Domain Threat Intelligence Feed</b>
+
+
+| Rule Condition         | Tranco Rank | Domain Age    | Risk Verdict | Action Triggered                                    |
+|------------------------|-------------|---------------|--------------|-----------------------------------------------------|
+| Top Global Site        | Top 100k    | Any           | LOW          | Safelisted; skip aggressive sandboxing              |
+| Newly Registered (NRD) | Unranked    | < 30 Days     | CRITICAL     | Flag suspicious; escalate alert for Wazuh           |
+| Recent Unranked        | Unranked    | 31 - 365 Days | HIGH         | Trigger multi-API reputation scan (url_analyzer.py) |
+| Mature Unranked        | Unranked    | > 365 Days    | MEDIUM       | Standard multi-API reputation scan                  |
+| Masked / Failed RDAP   | Unranked    | Unknown       | HIGH         | Fallback to full threat scan & VNC proxy sandbox    |
 
